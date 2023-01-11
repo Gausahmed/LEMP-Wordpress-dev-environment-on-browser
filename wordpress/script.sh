@@ -20,6 +20,43 @@ echo "127.0.0.1:8000 $site_name" >> /etc/hosts
 #creating required files
 mkdir wordpress-docker
 cd wordpress-docker
+# Creating public and nginx
+echo "Creating nginx configuration file"
+mkdir public nginx
+cd nginx | cat > default.conf << EOF
+events {}
+http{
+    server {
+        listen 80;
+        server_name $host;
+        root /usr/share/nginx/html;
+        index  index.php index.html index.html;
+
+        location / {
+            try_files $uri $uri/ /index.php?$is_args$args;
+        }
+
+        location ~ \.php$ {
+            # try_files $uri =404;
+            # fastcgi_pass unix:/run/php-fpm/www.sock;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass phpfpm:9000;
+            fastcgi_index   index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
+} 
+EOF
+echo "Done"
+echo "Creating index.php file in public"
+cd ..
+cd public | cat > index.php << EOF
+<?php
+phpinfo();
+EOF
+echo "Done"
+# cd ..
 echo "Creating docker-compose file ..."
 cat > docker-compose.yml << EOF 
 version: '3'
@@ -98,43 +135,6 @@ volumes:
   db_data:
 EOF
 echo "Done"
-# Creating public and nginx
-echo "Creating nginx configuration file"
-mkdir public nginx
-cd nginx | cat > default.conf << EOF
-events {}
-http{
-    server {
-        listen 80;
-        server_name $host;
-        root /usr/share/nginx/html;
-        index  index.php index.html index.html;
-
-        location / {
-            try_files $uri $uri/ /index.php?$is_args$args;
-        }
-
-        location ~ \.php$ {
-            # try_files $uri =404;
-            # fastcgi_pass unix:/run/php-fpm/www.sock;
-            fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass phpfpm:9000;
-            fastcgi_index   index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include fastcgi_params;
-        }
-    }
-} 
-EOF
-echo "Done"
-echo "Creating index.php file in public"
-cd ..
-cd public | cat > index.php << EOF
-<?php
-phpinfo();
-EOF
-echo "Done"
-cd ..
 
 echo "Creating LEMP stck in docker for wordpress"
 docker-compose up -d
