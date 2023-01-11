@@ -58,7 +58,7 @@ cat > index.php << EOF
 phpinfo();
 EOF
 echo "Done"
-# cd ..
+cd ..
 echo "Creating docker-compose file ..."
 cat > docker-compose.yml << EOF 
 version: '3'
@@ -83,7 +83,7 @@ services:
     depends_on:
       - db
     ports:
-      - 9000:9000
+      - '9000:9000'
     volumes: ['./public:/usr/share/nginx/html']
     networks:
       - wpsite
@@ -125,7 +125,7 @@ services:
       - phpmyadmin
       - phpfpm
     ports:
-      - '8081:80'
+      - '8001:80'
     volumes: 
       - ./:/var/www/html
       - ./nginx/default.conf:/etc/nginx/nginx.conf
@@ -137,13 +137,14 @@ volumes:
   db_data:
 EOF
 echo "Done"
-
+fuser -k 8000/tcp 9000/tcp 8081/tcp 8080/tcp
 echo "Creating LEMP stck in docker for wordpress"
 docker-compose up -d
 echo "Servers created"
 
 # prompting user to open site in browser
 echo "Site is up and healthy. Open $site_name in any browser to view it."
+echo "Or click on the link -> http://localhost:8000"
 
 # Adding subcommands to enbale/disable
 if [ "$2" == "enable" ]; then
