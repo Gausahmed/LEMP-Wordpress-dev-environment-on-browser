@@ -23,7 +23,8 @@ cd wordpress-docker
 # Creating public and nginx
 echo "Creating nginx configuration file"
 mkdir public nginx
-cd nginx | cat > default.conf << EOF
+cd nginx
+cat > default.conf << EOF
 events {}
 http{
     server {
@@ -51,7 +52,8 @@ EOF
 echo "Done"
 echo "Creating index.php file in public"
 cd ..
-cd public | cat > index.php << EOF
+cd public
+cat > index.php << EOF
 <?php
 phpinfo();
 EOF
