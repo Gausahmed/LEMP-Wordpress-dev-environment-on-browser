@@ -158,4 +158,6 @@ if [ "$2" == "delete" ]; then
  docker-compose down -v
  #removing hosts entry
  sed -i "/$site_name/d" /etc/hosts
+ #removing all local files
+ rm -rf ./
 fi
