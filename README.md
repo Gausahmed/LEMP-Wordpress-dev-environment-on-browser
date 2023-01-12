@@ -1,4 +1,4 @@
-# rtcamp-assignment
+# Bash Script for creating LEMP Wordpress Site
 
 This repository contains a Bash shell script which is capable of performing following tasks,
 1. Check if Docker and Docker-compose is installed in your machine or not. If not installed, install it.
@@ -37,8 +37,34 @@ To run the sub-commands you need to add it to the main command as an argument fo
 ```Bash
 ./script.sh SITE_NAME enable
 ```
-2. To Delete the containers,
+2. To Stop the containers,
 
 ```Bash
 ./script.sh SITE_NAME disable
 ```
+3. To Delete the containers,
+
+```Bash
+./script.sh SITE_NAME delete
+```
+
+### Installing Wordpress at localhost
+
+After opening the site in a browser, you can see the wordpress installation page with a form requiring your information and login credentials.
+Fill the form and create the credentials and note them down for further use. Click on Install wordpress button at bottom.
+Login with your credentials and you are ready with your wordpress site.
+
+### Error handling
+
+The script is already written so that there will be no room for error while execution but, we can't guarentee that the error will not occur.
+Incase any error occurs, you can look at the logs of all the containers and get rid of the error ofcourse manually by running,
+
+```Bash
+docker-compose logs CONTAINER_NAME
+```
+There are more chances that the error can occure due to the ports on which we are running our stack are already in use. Although I have added a command in the script that makes the required ports free, but there can be some services which can restart at the same port. 
+To avoid this error, check for the services running on the following ports 8000, 8080, 9000, 3306, 8081. If you found any service on one of these ports please try to stop them or you can change the script according to your required ports.
+
+## Conclusion & Results
+
+With the above bash script we can create a sample wordpress site running inside Docker containers. the script itself creates the required files and folders like docker-compose.yml, nginx config files, etc.
